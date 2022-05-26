@@ -9,8 +9,9 @@ pentatiles: pentatiles.tgz
 	tar xvf $<
 
 pentatiles.tgz:
-	curl --output $@ http://www.arthy.org/pentatiles.tgz
+	curl --output $@ https://www.arthy.org/pentatiles.tgz
 
 
 clean:
-	rm ${PAPER}
+	rm -f ${PAPER}
+	rm -rf pentatiles*
