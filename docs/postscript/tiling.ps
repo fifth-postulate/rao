@@ -1,0 +1,44 @@
+/tiling {
+    [/Ms /points] dup length dict begin { exch def } forall
+        Ms {
+            points exch pentagon
+        } forall
+    end
+} def
+
+/pentagon {
+    [/M /points] dup length dict begin { exch def } forall
+        points 0 get aload pop M transform moveto
+        1 1 points length 1 sub {
+            points exch get aload pop M transform lineto
+        } for
+        closepath
+    end
+} def
+
+/pagewidth 210 def
+/pageheight 297 def
+
+save /cleanslate exch def
+
+72 25.4 div dup scale
+
+pagewidth 2 div pageheight 2 div translate
+
+/P [[0.0 0.0] [5.0 0.0] [7.5 5.0] [4.5 7.5] [0.0 5.0]] def
+/Ms [
+    [10 0 0 10 0 0]
+    [0 10 -10 0 0 0]
+    [-10 0 0 -10 0 0]
+    [0 -10 10 0 0 0]
+ ] def
+
+newpath
+
+P Ms tiling
+
+stroke
+
+showpage
+
+cleanslate restore
