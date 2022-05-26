@@ -4,3 +4,6 @@ Cargo.lock
 
 # Pentatiles are related to the C++ code Rao used for the verification
 pentatiles*
+
+# Editor specific code
+.vscode
