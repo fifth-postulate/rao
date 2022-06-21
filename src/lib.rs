@@ -1,3 +1,5 @@
+pub mod algebra;
+
 #[cfg(test)]
 mod tests {
     #[test]
