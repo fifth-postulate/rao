@@ -1,16 +1,16 @@
 use std::{
-    iter::zip,
+    iter::{zip, FromIterator},
     ops::{Add, Mul, Sub},
 };
 
 #[derive(Debug, PartialEq)]
-pub struct Vector {
+pub struct Vector<T> {
     dimension: usize,
-    coordinates: Vec<f64>,
+    coordinates: Vec<T>,
 }
 
-impl Vector {
-    fn new(coordinates: Vec<f64>) -> Self {
+impl<T> Vector<T> {
+    fn new(coordinates: Vec<T>) -> Self {
         Self {
             dimension: coordinates.len(),
             coordinates,
@@ -18,7 +18,11 @@ impl Vector {
     }
 }
 
-impl Add for Vector {
+impl<T> Add for Vector<T>
+where
+    T: Add<T>,
+    Vec<T>: FromIterator<<T as Add>::Output>,
+{
     type Output = Option<Self>;
 
     fn add(self, other: Self) -> Self::Output {
@@ -33,7 +37,11 @@ impl Add for Vector {
     }
 }
 
-impl Sub for Vector {
+impl<T> Sub for Vector<T>
+where
+    T: Sub<T>,
+    Vec<T>: FromIterator<<T as Sub>::Output>,
+{
     type Output = Option<Self>;
 
     fn sub(self, other: Self) -> Self::Output {
@@ -48,11 +56,15 @@ impl Sub for Vector {
     }
 }
 
-impl Mul<f64> for Vector {
+impl<T> Mul<T> for Vector<T>
+where
+    T: Mul<Output = T> + Copy,
+    Vec<T>: FromIterator<<T as Mul>::Output>,
+{
     type Output = Self;
 
-    fn mul(self, scalar: f64) -> Self::Output {
-        let coordinates = self.coordinates.iter().map(|c| c * scalar).collect();
+    fn mul(self, scalar: T) -> Self::Output {
+        let coordinates = self.coordinates.iter().map(|c| scalar * *c).collect();
 
         Self::new(coordinates)
     }
