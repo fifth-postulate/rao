@@ -6,16 +6,63 @@ use std::{
 
 #[derive(Debug, PartialEq)]
 pub struct Vector<T> {
-    dimension: usize,
+    dim: usize,
     coordinates: Vec<T>,
 }
 
 impl<T> Vector<T> {
     fn new(coordinates: Vec<T>) -> Self {
         Self {
-            dimension: coordinates.len(),
+            dim: coordinates.len(),
             coordinates,
         }
+    }
+
+    pub fn dimension(&self) -> usize {
+        self.dim
+    }
+}
+
+impl<T> From<(T, T)> for Vector<T> {
+    fn from(source: (T, T)) -> Self {
+        Self::new(vec![source.0, source.1])
+    }
+}
+
+impl<T> From<(T, T, T)> for Vector<T> {
+    fn from(source: (T, T, T)) -> Self {
+        Self::new(vec![source.0, source.1, source.2])
+    }
+}
+
+impl<T> From<(T, T, T, T)> for Vector<T> {
+    fn from(source: (T, T, T, T)) -> Self {
+        Self::new(vec![source.0, source.1, source.2, source.3])
+    }
+}
+
+impl<T> From<(T, T, T, T, T)> for Vector<T> {
+    fn from(source: (T, T, T, T, T)) -> Self {
+        Self::new(vec![source.0, source.1, source.2, source.3, source.4])
+    }
+}
+
+impl<T> From<(T, T, T, T, T, T)> for Vector<T> {
+    fn from(source: (T, T, T, T, T, T)) -> Self {
+        Self::new(vec![
+            source.0, source.1, source.2, source.3, source.4, source.5,
+        ])
+    }
+}
+
+impl<T> Clone for Vector<T>
+where
+    T: Clone,
+{
+    fn clone(&self) -> Self {
+        let coordinates = self.coordinates.to_vec();
+
+        Self::new(coordinates)
     }
 }
 
@@ -24,16 +71,16 @@ where
     T: Add<T>,
     Vec<T>: FromIterator<<T as Add>::Output>,
 {
-    type Output = Option<Self>;
+    type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        if self.dimension == other.dimension {
+        if self.dimension() == other.dimension() {
             let coordinates = zip(self.coordinates, other.coordinates)
                 .map(|(l, r)| l + r)
                 .collect();
-            Some(Self::new(coordinates))
+            Self::new(coordinates)
         } else {
-            None
+            panic!("dimensions of vectors do not correspond")
         }
     }
 }
@@ -43,16 +90,16 @@ where
     T: Sub<T>,
     Vec<T>: FromIterator<<T as Sub>::Output>,
 {
-    type Output = Option<Self>;
+    type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
-        if self.dimension == other.dimension {
+        if self.dimension() == other.dimension() {
             let coordinates = zip(self.coordinates, other.coordinates)
                 .map(|(l, r)| l - r)
                 .collect();
-            Some(Self::new(coordinates))
+            Self::new(coordinates)
         } else {
-            None
+            panic!("dimensions of vectors do not correspond")
         }
     }
 }
@@ -75,17 +122,30 @@ impl<T> InnerProduct<&Vector<T>> for Vector<T>
 where
     T: Add<T> + Mul<T> + Sum<<T as Mul>::Output> + Copy,
 {
-    type Output = Option<T>;
+    type Output = T;
 
     fn dot(&self, other: &Self) -> Self::Output {
-        if self.dimension == other.dimension {
+        if self.dimension() == other.dimension() {
             let inner_product = zip(self.coordinates.iter(), other.coordinates.iter())
                 .map(|(l, r)| *l * *r)
                 .sum();
-            Some(inner_product)
+            inner_product
         } else {
-            None
+            panic!("dimensions of vectors do not correspond")
         }
+    }
+}
+
+impl<T> Sum for Vector<T>
+where
+    T: Add<T>,
+    Vec<T>: FromIterator<<T as Add>::Output>,
+{
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = Vector<T>>,
+    {
+        iter.reduce(|l, r| (l + r)).unwrap(/* consider no elements */)
     }
 }
 
@@ -100,7 +160,7 @@ mod tests {
 
         let sum = u + v;
 
-        assert_eq!(sum, Some(Vector::new(vec![1.0, 1.0])));
+        assert_eq!(sum, Vector::new(vec![1.0, 1.0]));
     }
 
     #[test]
@@ -110,7 +170,7 @@ mod tests {
 
         let difference = u - v;
 
-        assert_eq!(difference, Some(Vector::new(vec![1.0, 0.0])));
+        assert_eq!(difference, Vector::new(vec![1.0, 0.0]));
     }
 
     #[test]
@@ -129,6 +189,6 @@ mod tests {
 
         let inner_product = u.dot(&v);
 
-        assert_eq!(inner_product, Some(14.0));
+        assert_eq!(inner_product, 14.0);
     }
 }
