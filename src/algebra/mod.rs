@@ -1,3 +1,3 @@
-mod inner;
-mod space;
-mod vector;
+pub mod inner;
+pub mod space;
+pub mod vector;

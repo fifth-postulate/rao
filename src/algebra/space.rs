@@ -5,7 +5,8 @@ use std::{
     ops::{Add, AddAssign, Div, Mul, Sub},
 };
 
-struct VectorSpace<T> {
+#[derive(Debug)]
+pub struct VectorSpace<T> {
     dimension: usize,
     basis: Vec<Vector<T>>,
 }
