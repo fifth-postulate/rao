@@ -6,20 +6,16 @@ use std::{
 
 #[derive(Debug, PartialEq)]
 pub struct Vector<T> {
-    dim: usize,
     coordinates: Vec<T>,
 }
 
 impl<T> Vector<T> {
     fn new(coordinates: Vec<T>) -> Self {
-        Self {
-            dim: coordinates.len(),
-            coordinates,
-        }
+        Self { coordinates }
     }
 
     pub fn dimension(&self) -> usize {
-        self.dim
+        self.coordinates.len()
     }
 }
 
