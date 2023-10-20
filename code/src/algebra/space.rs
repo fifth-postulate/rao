@@ -7,14 +7,14 @@ use std::{
 
 #[derive(Debug)]
 pub struct VectorSpace<T> {
-    dimension: usize,
+    ambient_dimension: usize,
     basis: Vec<Vector<T>>,
 }
 
 impl<T> VectorSpace<T> {
     pub fn new(dimension: usize) -> Self {
         Self {
-            dimension,
+            ambient_dimension: dimension,
             basis: vec![],
         }
     }
@@ -61,7 +61,7 @@ where
     }
 
     pub fn projection(&self, v: &Vector<T>) -> Vector<T> {
-        if self.dimension == v.dimension() {
+        if self.ambient_dimension == v.dimension() {
             let coefficients: Vec<T> = self.basis.iter().map(|b| b.dot(v) / b.dot(b)).collect();
 
             let projection = zip(self.basis.iter().cloned(), coefficients)
@@ -83,7 +83,7 @@ where
     Vec<T>: FromIterator<<T as Sub>::Output>,
 {
     fn add_assign(&mut self, v: Vector<T>) {
-        if self.dimension == v.dimension() {
+        if self.ambient_dimension == v.dimension() {
             if !self.basis.is_empty() {
                 let projection = self.projection(&v);
                 let b = v - projection;
