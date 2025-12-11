@@ -33,8 +33,8 @@ where
             let minimum_dimension = vectors.iter().map(|v| v.dimension()).min().unwrap();
             let maximum_dimension = vectors.iter().map(|v| v.dimension()).max().unwrap();
             if minimum_dimension == maximum_dimension {
-                let dimension = maximum_dimension;
-                let mut space = Self::new(dimension);
+                let ambient_dimension = maximum_dimension;
+                let mut space = Self::new(ambient_dimension);
 
                 for v in vectors {
                     space += v;
