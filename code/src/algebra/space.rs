@@ -56,7 +56,7 @@ where
     Vec<T>: FromIterator<<T as Mul>::Output>,
     Vec<T>: FromIterator<<T as Add>::Output>,
 {
-    pub fn contains(self, v: &Vector<T>) -> bool {
+    pub fn contains(&self, v: &Vector<T>) -> bool {
         self.projection(v) == *v
     }
 
@@ -84,13 +84,8 @@ where
 {
     fn add_assign(&mut self, v: Vector<T>) {
         if self.ambient_dimension == v.dimension() {
-            if !self.basis.is_empty() {
-                let projection = self.projection(&v);
-                let b = v - projection;
-                // TODO check if b is zero
-                self.basis.push(b);
-            } else {
-                self.basis.push(v);
+            if self.basis.is_empty() || !self.contains(&v) {
+                self.basis.push(v)
             }
         } else {
             panic!("dimensions of vectors do not correspond")
