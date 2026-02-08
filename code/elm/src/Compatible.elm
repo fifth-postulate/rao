@@ -69,10 +69,10 @@ viewOutput : Model -> Html Msg
 viewOutput model =
     let
         ws =
-            Rao.vectorType model.angles
+            Rao.compat model.angles
     in
     model.angles
-        |> Rao.vectorType
+        |> Rao.compat
         |> List.map viewVectorType
         |> Html.div []
 

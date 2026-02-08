@@ -1,10 +1,10 @@
-module Rao exposing (vectorType)
+module Rao exposing (compat)
 
 import Fraction exposing (Fraction)
 
 
-vectorType : List Fraction -> List (List Int)
-vectorType angles =
+compat : List Fraction -> List (List Int)
+compat angles =
     let
         go : Fraction -> List Fraction -> List (List Int)
         go remainingSum ts =
