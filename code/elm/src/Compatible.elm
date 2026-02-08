@@ -1,5 +1,6 @@
 module Compatible exposing (main)
 
+import BoundingBox
 import Browser
 import Fraction exposing (Fraction)
 import Html exposing (Attribute, Html)
@@ -79,8 +80,13 @@ viewOutput model =
 viewPolygon : List Fraction -> Svg Msg
 viewPolygon angles =
     let
-        ( svg, bbox ) =
+        ( svg, start ) =
             Polygon.view (Polygon.fromAngles angles)
+
+        bbox =
+            start
+                -- |> BoundingBox.squareUp
+                |> BoundingBox.expand 0.1
 
         viewBox =
             [ bbox.x, bbox.y, bbox.width, bbox.height ]

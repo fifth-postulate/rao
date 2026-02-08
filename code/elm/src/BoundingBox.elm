@@ -1,4 +1,4 @@
-module BoundingBox exposing (BoundingBox, boundingBox)
+module BoundingBox exposing (BoundingBox, boundingBox, expand, squareUp)
 
 
 type alias BoundingBox =
@@ -12,6 +12,30 @@ type alias BoundingBox =
 type alias Interval =
     { left : Float
     , right : Float
+    }
+
+
+expand : Float -> BoundingBox -> BoundingBox
+expand delta box =
+    { box
+        | x = box.x - delta / 2
+        , y = box.y - delta / 2
+        , width = box.width + delta
+        , height = box.height + delta
+    }
+
+
+squareUp : BoundingBox -> BoundingBox
+squareUp box =
+    let
+        side =
+            max box.width box.height
+    in
+    { box
+        | x = box.x - ((side - box.width) / 2)
+        , y = box.y - ((side - box.height) / 2)
+        , width = side
+        , height = side
     }
 
 
