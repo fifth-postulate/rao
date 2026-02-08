@@ -2,8 +2,11 @@ module Compatible exposing (main)
 
 import Browser
 import Fraction exposing (Fraction)
-import Html exposing (Html)
+import Html exposing (Attribute, Html)
+import Polygon
 import Rao
+import Svg exposing (Svg)
+import Svg.Attributes as Attribute
 
 
 main : Program () Model Msg
@@ -67,28 +70,33 @@ viewAngle index value =
 
 viewOutput : Model -> Html Msg
 viewOutput model =
-    let
-        ws =
-            Rao.compat model.angles
-    in
-    model.angles
-        |> Rao.compat
-        |> List.map viewVectorType
-        |> Html.div []
+    Html.div []
+        [ viewPolygon model.angles
+        , Rao.view model.angles
+        ]
 
 
-viewVectorType : List Int -> Html Msg
-viewVectorType weights =
+viewPolygon : List Fraction -> Svg Msg
+viewPolygon angles =
     let
-        comma =
-            Html.text ", "
+        ( svg, bbox ) =
+            Polygon.view (Polygon.fromAngles angles)
+
+        viewBox =
+            [ bbox.x, bbox.y, bbox.width, bbox.height ]
+                |> List.map String.fromFloat
+                |> String.join " "
     in
-    weights
-        |> List.map (String.fromInt >> Html.text)
-        |> List.intersperse comma
-        |> Html.pre []
-        |> List.singleton
-        |> Html.div []
+    Svg.svg
+        [ Attribute.width "400px"
+        , Attribute.height "400px"
+        , Attribute.viewBox viewBox
+        , Attribute.fill "gray"
+        , Attribute.stroke "black"
+        , Attribute.strokeWidth "0.01"
+        ]
+        [ svg
+        ]
 
 
 type Msg

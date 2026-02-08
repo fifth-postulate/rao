@@ -1,6 +1,29 @@
-module Rao exposing (compat)
+module Rao exposing (compat, view)
 
 import Fraction exposing (Fraction)
+import Html exposing (Html)
+
+
+view : List Fraction -> Html msg
+view angles =
+    angles
+        |> compat
+        |> List.map viewVectorType
+        |> Html.div []
+
+
+viewVectorType : List Int -> Html msg
+viewVectorType weights =
+    let
+        comma =
+            Html.text ", "
+    in
+    weights
+        |> List.map (String.fromInt >> Html.text)
+        |> List.intersperse comma
+        |> Html.pre []
+        |> List.singleton
+        |> Html.div []
 
 
 compat : List Fraction -> List (List Int)
