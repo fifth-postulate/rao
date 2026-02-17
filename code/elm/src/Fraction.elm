@@ -1,4 +1,4 @@
-module Fraction exposing (Fraction, add, create, divide, floor, invert, multiply, negate, one, scale, subtract, toFloat, toString, zero)
+module Fraction exposing (Fraction, add, create, divide, floor, invert, isZero, multiply, negate, one, scale, subtract, toFloat, toString, zero)
 
 
 type Fraction
@@ -144,3 +144,10 @@ toFloat v =
     case v of
         Fraction n d ->
             Basics.toFloat n / Basics.toFloat d
+
+
+isZero : Fraction -> Bool
+isZero v =
+    case v of
+        Fraction n _ ->
+            n == 0
