@@ -1,17 +1,13 @@
 module BoundingBox exposing (BoundingBox, boundingBox, expand, squareUp)
 
+import BoundingBox.Interal exposing (Interval, extend)
+
 
 type alias BoundingBox =
     { x : Float
     , y : Float
     , width : Float
     , height : Float
-    }
-
-
-type alias Interval =
-    { left : Float
-    , right : Float
     }
 
 
@@ -39,11 +35,6 @@ squareUp box =
     }
 
 
-extend : Float -> Interval -> Interval
-extend z interval =
-    { interval | left = min z interval.left, right = max z interval.right }
-
-
 boundingBox : List ( Float, Float ) -> BoundingBox
 boundingBox pss =
     let
@@ -58,17 +49,17 @@ boundingBox pss =
 
         toBBox : ( Interval, Interval ) -> BoundingBox
         toBBox ( xs, ys ) =
-            { x = xs.left
-            , y = ys.left
-            , width = xs.right - xs.left
-            , height = ys.right - ys.left
+            { x = Interval.min xs
+            , y = Interval.min ys
+            , width = Interval.size xs
+            , height = Interval.size ys
             }
     in
     case pss of
         ( x, y ) :: rest ->
-            go { left = x, right = x } { left = y, right = y } rest
+            go (Interval.point x) (Interval.point y) rest
                 |> toBBox
 
         [] ->
-            ( { left = 0, right = 0 }, { left = 0, right = 0 } )
+            ( Interval.point 0, Interval.point 0 )
                 |> toBBox
