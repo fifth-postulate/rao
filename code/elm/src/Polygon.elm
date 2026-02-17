@@ -11,51 +11,12 @@ import Util exposing (rotate, uncurry, zip)
 
 
 type Polygon
-    = Angles (List Fraction)
+    = Angles (List Point)
 
 
 fromAngles : List Fraction -> Polygon
-fromAngles =
-    Angles
-
-
-view : Polygon -> ( Svg msg, BoundingBox )
-view polygon =
-    case polygon of
-        Angles angles ->
-            viewAngles angles
-
-
-viewAngles : List Fraction -> ( Svg msg, BoundingBox )
-viewAngles angles =
-    let
-        toPair : Point -> ( Float, Float )
-        toPair =
-            Point.toCartesian >> Cartesian.to
-
-        pointToString : Point -> String
-        pointToString point =
-            let
-                ( x, y ) =
-                    toPair point
-            in
-            String.fromFloat x ++ "," ++ String.fromFloat y
-
-        points =
-            angles
-                |> vertexPoints
-
-        ps =
-            points
-                |> List.map pointToString
-                |> String.join " "
-    in
-    ( Svg.polygon
-        [ Attribute.points ps
-        ]
-        []
-    , BoundingBox.boundingBox (List.map toPair points)
-    )
+fromAngles angles =
+    Angles (vertexPoints angles)
 
 
 vertexPoints : List Fraction -> List Point
@@ -108,3 +69,38 @@ vertexPoints angles =
                     List.reverse acc
     in
     go [] (Polar.from ( 1.0, 0.0 )) alphas betas
+
+
+view : Polygon -> ( Svg msg, BoundingBox )
+view polygon =
+    case polygon of
+        Angles points ->
+            viewPoints points
+
+
+viewPoints : List Point -> ( Svg msg, BoundingBox )
+viewPoints points =
+    let
+        toPair : Point -> ( Float, Float )
+        toPair =
+            Point.toCartesian >> Cartesian.to
+
+        pointToString : Point -> String
+        pointToString point =
+            let
+                ( x, y ) =
+                    toPair point
+            in
+            String.fromFloat x ++ "," ++ String.fromFloat y
+
+        ps =
+            points
+                |> List.map pointToString
+                |> String.join " "
+    in
+    ( Svg.polygon
+        [ Attribute.points ps
+        ]
+        []
+    , BoundingBox.boundingBox (List.map toPair points)
+    )
