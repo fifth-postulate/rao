@@ -4,6 +4,7 @@ import BoundingBox exposing (BoundingBox)
 import Fraction exposing (Fraction)
 import Svg exposing (Svg)
 import Svg.Attributes as Attribute
+import Util exposing (uncurry)
 
 
 type Polygon
@@ -108,11 +109,6 @@ zip xs ys =
                     List.reverse acc
     in
     go [] xs ys
-
-
-uncurry : (a -> b -> c) -> ( a, b ) -> c
-uncurry f ( a, b ) =
-    f a b
 
 
 rotate : List a -> List a

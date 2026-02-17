@@ -4,6 +4,7 @@ import Expect exposing (Expectation)
 import Fraction exposing (Fraction)
 import Fuzz exposing (..)
 import Test exposing (..)
+import Util exposing (uncurry)
 
 
 suite : Test
@@ -96,8 +97,3 @@ fraction =
     pair (intRange -100 100) (intRange 1 1000)
         |> Fuzz.map (uncurry Fraction.create)
         |> Fuzz.map (Maybe.withDefault Fraction.zero)
-
-
-uncurry : (a -> b -> c) -> ( a, b ) -> c
-uncurry f ( a, b ) =
-    f a b
