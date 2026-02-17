@@ -1,6 +1,6 @@
-module BoundingBox exposing (BoundingBox, boundingBox, expand, squareUp)
+module BoundingBox exposing (BoundingBox, boundingBox, box, expand, squareUp)
 
-import BoundingBox.Interal exposing (Interval, extend)
+import BoundingBox.Interval as Interval exposing (Interval, extend)
 
 
 type alias BoundingBox =
@@ -11,28 +11,9 @@ type alias BoundingBox =
     }
 
 
-expand : Float -> BoundingBox -> BoundingBox
-expand delta box =
-    { box
-        | x = box.x - delta / 2
-        , y = box.y - delta / 2
-        , width = box.width + delta
-        , height = box.height + delta
-    }
-
-
-squareUp : BoundingBox -> BoundingBox
-squareUp box =
-    let
-        side =
-            max box.width box.height
-    in
-    { box
-        | x = box.x - ((side - box.width) / 2)
-        , y = box.y - ((side - box.height) / 2)
-        , width = side
-        , height = side
-    }
+box : Float -> Float -> Float -> Float -> BoundingBox
+box x y width height =
+    { x = x, y = y, width = width, height = height }
 
 
 boundingBox : List ( Float, Float ) -> BoundingBox
@@ -49,11 +30,7 @@ boundingBox pss =
 
         toBBox : ( Interval, Interval ) -> BoundingBox
         toBBox ( xs, ys ) =
-            { x = Interval.min xs
-            , y = Interval.min ys
-            , width = Interval.size xs
-            , height = Interval.size ys
-            }
+            box (Interval.min xs) (Interval.min ys) (Interval.size xs) (Interval.size ys)
     in
     case pss of
         ( x, y ) :: rest ->
@@ -63,3 +40,27 @@ boundingBox pss =
         [] ->
             ( Interval.point 0, Interval.point 0 )
                 |> toBBox
+
+
+expand : Float -> BoundingBox -> BoundingBox
+expand delta bbox =
+    { bbox
+        | x = bbox.x - delta / 2
+        , y = bbox.y - delta / 2
+        , width = bbox.width + delta
+        , height = bbox.height + delta
+    }
+
+
+squareUp : BoundingBox -> BoundingBox
+squareUp bbox =
+    let
+        side =
+            max bbox.width bbox.height
+    in
+    { bbox
+        | x = bbox.x - ((side - bbox.width) / 2)
+        , y = bbox.y - ((side - bbox.height) / 2)
+        , width = side
+        , height = side
+    }
