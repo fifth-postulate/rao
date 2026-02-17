@@ -2,6 +2,9 @@ module Polygon exposing (Polygon, fromAngles, view)
 
 import BoundingBox exposing (BoundingBox)
 import Fraction exposing (Fraction)
+import Polygon.Point as Point exposing (Point)
+import Polygon.Point.Cartesian as Cartesian exposing (Cartesian)
+import Polygon.Point.Polar as Polar exposing (Polar)
 import Svg exposing (Svg)
 import Svg.Attributes as Attribute
 import Util exposing (rotate, uncurry, zip)
@@ -26,8 +29,16 @@ view polygon =
 viewAngles : List Fraction -> ( Svg msg, BoundingBox )
 viewAngles angles =
     let
-        pairToString : ( Float, Float ) -> String
-        pairToString ( x, y ) =
+        toPair : Point -> ( Float, Float )
+        toPair =
+            Point.toCartesian >> Cartesian.to
+
+        pointToString : Point -> String
+        pointToString point =
+            let
+                ( x, y ) =
+                    toPair point
+            in
             String.fromFloat x ++ "," ++ String.fromFloat y
 
         points =
@@ -36,18 +47,18 @@ viewAngles angles =
 
         ps =
             points
-                |> List.map pairToString
+                |> List.map pointToString
                 |> String.join " "
     in
     ( Svg.polygon
         [ Attribute.points ps
         ]
         []
-    , BoundingBox.boundingBox points
+    , BoundingBox.boundingBox (List.map toPair points)
     )
 
 
-vertexPoints : List Fraction -> List ( Float, Float )
+vertexPoints : List Fraction -> List Point
 vertexPoints angles =
     let
         two =
@@ -63,8 +74,8 @@ vertexPoints angles =
                 |> List.map (uncurry Fraction.add)
                 |> List.map (Fraction.subtract Fraction.one)
 
-        go : List ( Float, Float ) -> Float -> Float -> List Fraction -> List Fraction -> List ( Float, Float )
-        go acc r angle us vs =
+        go : List Point -> Polar -> List Fraction -> List Fraction -> List Point
+        go acc polar us vs =
             case ( us, vs ) of
                 ( u :: uss, v :: vss ) ->
                     let
@@ -75,22 +86,25 @@ vertexPoints angles =
                             pi * Fraction.toFloat v
 
                         x =
-                            r * tan alpha / (tan alpha + tan beta)
+                            Polar.r polar * tan alpha / (tan alpha + tan beta)
 
                         y =
                             x * tan beta
 
                         r_ =
                             sqrt (x ^ 2 + y ^ 2)
+
+                        point =
+                            polar
+                                |> Point.fromPolar
                     in
                     go
-                        (( r * cos angle, r * sin angle ) :: acc)
-                        r_
-                        (angle + beta)
+                        (point :: acc)
+                        (Polar.from ( r_, Polar.a polar + beta ))
                         uss
                         vss
 
                 _ ->
                     List.reverse acc
     in
-    go [] 1.0 0.0 alphas betas
+    go [] (Polar.from ( 1.0, 0.0 )) alphas betas
