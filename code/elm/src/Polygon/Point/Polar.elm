@@ -1,23 +1,33 @@
-module Polygon.Point.Polar exposing (Polar, from, rotate, scale, to)
+module Polygon.Point.Polar exposing (Polar, a, from, r, rotate, scale, to)
 
 
 type Polar
-    = Polar { r : Float, angle : Float }
+    = Polar { radius : Float, angle : Float }
 
 
 from : ( Float, Float ) -> Polar
-from ( r, angle ) =
-    Polar { r = r, angle = angle }
+from ( radius, angle ) =
+    Polar { radius = radius, angle = angle }
 
 
 to : Polar -> ( Float, Float )
-to (Polar { r, angle }) =
-    ( r, angle )
+to (Polar { radius, angle }) =
+    ( radius, angle )
+
+
+r : Polar -> Float
+r (Polar polar) =
+    polar.radius
+
+
+a : Polar -> Float
+a (Polar polar) =
+    polar.angle
 
 
 scale : Float -> Polar -> Polar
 scale s (Polar polar) =
-    Polar { polar | r = s * polar.r }
+    Polar { polar | radius = s * polar.radius }
 
 
 rotate : Float -> Polar -> Polar
