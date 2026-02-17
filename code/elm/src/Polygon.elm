@@ -4,7 +4,7 @@ import BoundingBox exposing (BoundingBox)
 import Fraction exposing (Fraction)
 import Svg exposing (Svg)
 import Svg.Attributes as Attribute
-import Util exposing (uncurry)
+import Util exposing (rotate, uncurry, zip)
 
 
 type Polygon
@@ -94,30 +94,3 @@ vertexPoints angles =
                     List.reverse acc
     in
     go [] 1.0 0.0 alphas betas
-
-
-zip : List a -> List b -> List ( a, b )
-zip xs ys =
-    let
-        go : List ( a, b ) -> List a -> List b -> List ( a, b )
-        go acc us vs =
-            case ( us, vs ) of
-                ( u :: uss, v :: vss ) ->
-                    go (( u, v ) :: acc) uss vss
-
-                _ ->
-                    List.reverse acc
-    in
-    go [] xs ys
-
-
-rotate : List a -> List a
-rotate us =
-    let
-        hs =
-            List.take 1 us
-
-        ts =
-            List.drop 1 us
-    in
-    List.append ts hs
