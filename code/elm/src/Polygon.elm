@@ -11,12 +11,12 @@ import Util exposing (rotate, uncurry, zip)
 
 
 type Polygon
-    = Angles (List Point)
+    = Points (List Point)
 
 
 fromAngles : List Fraction -> Polygon
 fromAngles angles =
-    Angles (vertexPoints angles)
+    Points (vertexPoints angles)
 
 
 vertexPoints : List Fraction -> List Point
@@ -74,7 +74,7 @@ vertexPoints angles =
 view : Polygon -> ( Svg msg, BoundingBox )
 view polygon =
     case polygon of
-        Angles points ->
+        Points points ->
             viewPoints points
 
 
