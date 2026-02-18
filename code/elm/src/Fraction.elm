@@ -1,4 +1,4 @@
-module Fraction exposing (Fraction, add, create, divide, floor, invert, isZero, multiply, negate, one, scale, subtract, toFloat, toString, zero)
+module Fraction exposing (Fraction, add, create, divide, floor, fromInt, invert, isZero, multiply, negate, one, scale, subtract, toFloat, toString, two, zero)
 
 
 type Fraction
@@ -7,12 +7,22 @@ type Fraction
 
 zero : Fraction
 zero =
-    Fraction 0 1
+    fromInt 0
 
 
 one : Fraction
 one =
-    Fraction 1 1
+    fromInt 1
+
+
+two : Fraction
+two =
+    fromInt 2
+
+
+fromInt : Int -> Fraction
+fromInt n =
+    Fraction n 1
 
 
 create : Int -> Int -> Maybe Fraction

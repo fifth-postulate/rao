@@ -22,13 +22,9 @@ fromAngles angles =
 vertexPoints : List Fraction -> List Point
 vertexPoints angles =
     let
-        two =
-            Fraction.create 2 1
-                |> Maybe.withDefault Fraction.zero
-
         alphas =
             angles
-                |> List.map (\a -> Fraction.divide a two |> Maybe.withDefault Fraction.zero)
+                |> List.map (\a -> Fraction.divide a Fraction.two |> Maybe.withDefault Fraction.zero)
 
         betas =
             zip alphas (rotate alphas)
