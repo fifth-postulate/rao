@@ -1,4 +1,4 @@
-module FractionTest exposing (suite)
+module FractionTest exposing (fraction, suite)
 
 import Expect exposing (Expectation)
 import Fraction exposing (Fraction)
