@@ -1,7 +1,7 @@
-module AffineSubspace exposing (Subspace, base, subspace)
+module Algebra.AffineSubspace exposing (Subspace, base, subspace)
 
+import Algebra.Vector as Vector exposing (Vector)
 import Fraction exposing (Fraction)
-import Vector exposing (Vector)
 
 
 type Subspace

@@ -1,12 +1,12 @@
 module VectorTest exposing (suite)
 
+import Algebra.Vector as Vector exposing (Vector)
 import Expect exposing (Expectation)
 import Fraction
 import FractionTest exposing (fraction)
 import Fuzz exposing (..)
 import Test exposing (..)
 import Util exposing (uncurry)
-import Vector exposing (Vector)
 
 
 suite : Test

@@ -1,4 +1,4 @@
-module Vector exposing (Vector, add, dimension, dot, fromList, scale, subtract, zero)
+module Algebra.Vector exposing (Vector, add, dimension, dot, fromList, scale, subtract, zero)
 
 import Fraction exposing (Fraction)
 import Util exposing (uncurry, zip)

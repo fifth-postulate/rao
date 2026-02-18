@@ -1,12 +1,12 @@
 module AffineSubspaceTest exposing (suite)
 
-import AffineSubspace as Subspace exposing (Subspace, subspace)
+import Algebra.AffineSubspace as Subspace exposing (Subspace, subspace)
+import Algebra.Vector as Vector
 import Expect exposing (Expectation)
 import Fraction
 import Fuzz exposing (..)
 import Test exposing (..)
 import Util exposing (uncurry)
-import Vector
 
 
 suite : Test
