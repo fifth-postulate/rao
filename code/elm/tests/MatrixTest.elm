@@ -159,5 +159,37 @@ suite =
                             [ \( actual, _ ) -> Expect.equal actual expected
                             , \( _, operations ) -> Expect.equalLists operations [ Swap 1 0, Multiply halve 0 ]
                             ]
+            , test "a matrix that needs to be linearize will" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 0, 0, 1 ]
+                            , [ 2, 4, 0 ]
+                            , [ 0, 0, 2 ]
+                            ]
+                                |> matrix
+
+                        expected =
+                            [ [ 1, 2, 0 ]
+                            , [ 0, 0, 1 ]
+                            , [ 0, 0, 0 ]
+                            ]
+                                |> matrix
+
+                        halve =
+                            Fraction.fromInt 2
+                                |> Fraction.invert
+                                |> Maybe.withDefault Fraction.one
+                    in
+                    Matrix.rowEchelon start
+                        |> Expect.all
+                            [ \( actual, _ ) -> Expect.equal actual expected
+                            , \( _, operations ) ->
+                                Expect.equalLists operations
+                                    [ Swap 1 0
+                                    , Multiply halve 0
+                                    , Linear (Fraction.fromInt 2 |> Fraction.negate) 1 2
+                                    ]
+                            ]
             ]
         ]

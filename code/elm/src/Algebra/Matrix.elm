@@ -74,11 +74,38 @@ rowEchelon matrix =
             in
             find startRow
 
+        reduce : List Operation -> Int -> Int -> Matrix -> ( Matrix, List Operation )
+        reduce acc skipRow currentColumn start =
+            let
+                reduceFrom : List Operation -> Int -> Matrix -> ( Matrix, List Operation )
+                reduceFrom ac row m =
+                    if row < rowCount m then
+                        if row == skipRow then
+                            reduceFrom acc (row + 1) m
+
+                        else
+                            let
+                                c =
+                                    element row currentColumn m
+                                        |> Maybe.map Fraction.negate
+                                        |> Maybe.withDefault Fraction.zero
+                            in
+                            if not (c == Fraction.zero) then
+                                reduceFrom (Linear c skipRow row :: ac) (row + 1) (linear c skipRow row m)
+
+                            else
+                                reduceFrom ac (row + 1) m
+
+                    else
+                        ( m, ac )
+            in
+            reduceFrom acc 0 start
+
         go : List Operation -> Int -> Int -> Matrix -> ( Matrix, List Operation )
         go acc currentRow currentColumn m =
             if currentColumn < columnCount m then
                 case firstAfterRowInColumn (Fraction.isZero >> not) currentRow currentColumn m of
-                    Found r _ v ->
+                    Found r c v ->
                         if currentRow < r then
                             go (Swap r currentRow :: acc) currentRow currentColumn (swap r currentRow m)
 
@@ -92,7 +119,11 @@ rowEchelon matrix =
                             go (Multiply v_ r :: acc) currentRow currentColumn (multiplyRow v_ r m)
 
                         else
-                            ( m, List.reverse acc )
+                            let
+                                ( m_, acc_ ) =
+                                    reduce acc r c m
+                            in
+                            go acc_ (r + 1) (c + 1) m_
 
                     NotFound ->
                         go acc currentRow (currentColumn + 1) m
@@ -137,4 +168,30 @@ multiplyRow v row ((Rows rows) as matrix) =
     in
     rows
         |> Array.set row scaled
+        |> Rows
+
+
+linear : Fraction -> Int -> Int -> Matrix -> Matrix
+linear v from to ((Rows rows) as matrix) =
+    let
+        columns =
+            columnCount matrix
+
+        zero =
+            Vector.zero columns
+
+        addend =
+            rows
+                |> Array.get from
+                |> Maybe.map (Vector.scale v)
+                |> Maybe.withDefault zero
+
+        result =
+            rows
+                |> Array.get to
+                |> Maybe.map (Vector.add addend)
+                |> Maybe.withDefault zero
+    in
+    rows
+        |> Array.set to result
         |> Rows
