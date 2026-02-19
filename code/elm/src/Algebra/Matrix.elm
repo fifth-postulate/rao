@@ -49,7 +49,7 @@ type SearchResult
     | Found Int Int Fraction
 
 
-rowEchelon : Matrix -> ( Matrix, List Operation )
+rowEchelon : Matrix -> ( Matrix, List Operation, List Int )
 rowEchelon matrix =
     let
         firstAfterRowInColumn : (Fraction -> Bool) -> Int -> Int -> Matrix -> SearchResult
@@ -101,13 +101,13 @@ rowEchelon matrix =
             in
             reduceFrom acc 0 start
 
-        go : List Operation -> Int -> Int -> Matrix -> ( Matrix, List Operation )
-        go acc currentRow currentColumn m =
+        go : List Operation -> List Int -> Int -> Int -> Matrix -> ( Matrix, List Operation, List Int )
+        go acc pivots currentRow currentColumn m =
             if currentColumn < columnCount m then
                 case firstAfterRowInColumn (Fraction.isZero >> not) currentRow currentColumn m of
                     Found r c v ->
                         if currentRow < r then
-                            go (Swap r currentRow :: acc) currentRow currentColumn (swap r currentRow m)
+                            go (Swap r currentRow :: acc) pivots currentRow currentColumn (swap r currentRow m)
 
                         else if not (v == Fraction.one) then
                             let
@@ -116,22 +116,22 @@ rowEchelon matrix =
                                         |> Fraction.invert
                                         |> Maybe.withDefault Fraction.one
                             in
-                            go (Multiply v_ r :: acc) currentRow currentColumn (multiplyRow v_ r m)
+                            go (Multiply v_ r :: acc) pivots currentRow currentColumn (multiplyRow v_ r m)
 
                         else
                             let
                                 ( m_, acc_ ) =
                                     reduce acc r c m
                             in
-                            go acc_ (r + 1) (c + 1) m_
+                            go acc_ (c :: pivots) (r + 1) (c + 1) m_
 
                     NotFound ->
-                        go acc currentRow (currentColumn + 1) m
+                        go acc pivots currentRow (currentColumn + 1) m
 
             else
-                ( m, List.reverse acc )
+                ( m, List.reverse acc, List.reverse pivots )
     in
-    go [] 0 0 matrix
+    go [] [] 0 0 matrix
 
 
 swap : Int -> Int -> Matrix -> Matrix

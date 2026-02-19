@@ -111,8 +111,9 @@ suite =
                     in
                     Matrix.rowEchelon expected
                         |> Expect.all
-                            [ \( actual, _ ) -> Expect.equal actual expected
-                            , \( _, operations ) -> Expect.equal operations []
+                            [ \( actual, _, _ ) -> Expect.equal actual expected
+                            , \( _, operations, _ ) -> Expect.equal operations []
+                            , \( _, _, pivots ) -> Expect.equal pivots [ 0, 2 ]
                             ]
             , test "a matrix that needs to be swapped will" <|
                 \_ ->
@@ -131,8 +132,9 @@ suite =
                     in
                     Matrix.rowEchelon start
                         |> Expect.all
-                            [ \( actual, _ ) -> Expect.equal actual expected
-                            , \( _, operations ) -> Expect.equalLists operations [ Swap 1 0 ]
+                            [ \( actual, _, _ ) -> Expect.equal actual expected
+                            , \( _, operations, _ ) -> Expect.equalLists operations [ Swap 1 0 ]
+                            , \( _, _, pivots ) -> Expect.equal pivots [ 0, 2 ]
                             ]
             , test "a matrix that needs to be multiplied will" <|
                 \_ ->
@@ -156,8 +158,9 @@ suite =
                     in
                     Matrix.rowEchelon start
                         |> Expect.all
-                            [ \( actual, _ ) -> Expect.equal actual expected
-                            , \( _, operations ) -> Expect.equalLists operations [ Swap 1 0, Multiply halve 0 ]
+                            [ \( actual, _, _ ) -> Expect.equal actual expected
+                            , \( _, operations, _ ) -> Expect.equalLists operations [ Swap 1 0, Multiply halve 0 ]
+                            , \( _, _, pivots ) -> Expect.equal pivots [ 0, 2 ]
                             ]
             , test "a matrix that needs to be linearize will" <|
                 \_ ->
@@ -183,13 +186,38 @@ suite =
                     in
                     Matrix.rowEchelon start
                         |> Expect.all
-                            [ \( actual, _ ) -> Expect.equal actual expected
-                            , \( _, operations ) ->
+                            [ \( actual, _, _ ) -> Expect.equal actual expected
+                            , \( _, operations, _ ) ->
                                 Expect.equalLists operations
                                     [ Swap 1 0
                                     , Multiply halve 0
                                     , Linear (Fraction.fromInt 2 |> Fraction.negate) 1 2
                                     ]
+                            , \( _, _, pivots ) -> Expect.equal pivots [ 0, 2 ]
+                            ]
+            , test "A computational Introduction to Number Theory and Algebra (p325)" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 0, 1, -2, 0, 0, 3 ]
+                            , [ 0, 0, 0, 1, 0, 2 ]
+                            , [ 0, 0, 0, 0, 1, -4 ]
+                            , [ 0, 0, 0, 0, 0, 0 ]
+                            ]
+                                |> matrix
+
+                        expected =
+                            [ [ 0, 1, -2, 0, 0, 3 ]
+                            , [ 0, 0, 0, 1, 0, 2 ]
+                            , [ 0, 0, 0, 0, 1, -4 ]
+                            , [ 0, 0, 0, 0, 0, 0 ]
+                            ]
+                                |> matrix
+                    in
+                    Matrix.rowEchelon start
+                        |> Expect.all
+                            [ \( actual, _, _ ) -> Expect.equal actual expected
+                            , \( _, _, pivots ) -> Expect.equal pivots [ 1, 3, 4 ]
                             ]
             ]
         ]
