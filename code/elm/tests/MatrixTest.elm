@@ -1,6 +1,6 @@
 module MatrixTest exposing (suite)
 
-import Algebra.Matrix as Matrix exposing (Matrix)
+import Algebra.Matrix as Matrix exposing (Matrix, Operation(..))
 import Algebra.Vector as Vector exposing (Vector)
 import Expect exposing (Expectation)
 import Fraction exposing (Fraction)
@@ -98,5 +98,41 @@ suite =
                             Nothing
                     in
                     Expect.equal actual expected
+            ]
+        , describe "row echelon"
+            [ test "a matrix in row echelon form isn't transformed" <|
+                \_ ->
+                    let
+                        expected =
+                            [ [ 1, 2, 0 ]
+                            , [ 0, 0, 1 ]
+                            ]
+                                |> matrix
+                    in
+                    Matrix.rowEchelon expected
+                        |> Expect.all
+                            [ \( actual, _ ) -> Expect.equal actual expected
+                            , \( _, operations ) -> Expect.equal operations []
+                            ]
+            , test "a matrix that needs to be swapped will" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 0, 0, 1 ]
+                            , [ 1, 2, 0 ]
+                            ]
+                                |> matrix
+
+                        expected =
+                            [ [ 1, 2, 0 ]
+                            , [ 0, 0, 1 ]
+                            ]
+                                |> matrix
+                    in
+                    Matrix.rowEchelon start
+                        |> Expect.all
+                            [ \( actual, _ ) -> Expect.equal actual expected
+                            , \( _, operations ) -> Expect.equalLists operations [ Swap 1 0 ]
+                            ]
             ]
         ]
