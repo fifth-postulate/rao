@@ -134,5 +134,30 @@ suite =
                             [ \( actual, _ ) -> Expect.equal actual expected
                             , \( _, operations ) -> Expect.equalLists operations [ Swap 1 0 ]
                             ]
+            , test "a matrix that needs to be multiplied will" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 0, 0, 1 ]
+                            , [ 2, 4, 0 ]
+                            ]
+                                |> matrix
+
+                        expected =
+                            [ [ 1, 2, 0 ]
+                            , [ 0, 0, 1 ]
+                            ]
+                                |> matrix
+
+                        halve =
+                            Fraction.fromInt 2
+                                |> Fraction.invert
+                                |> Maybe.withDefault Fraction.one
+                    in
+                    Matrix.rowEchelon start
+                        |> Expect.all
+                            [ \( actual, _ ) -> Expect.equal actual expected
+                            , \( _, operations ) -> Expect.equalLists operations [ Swap 1 0, Multiply halve 0 ]
+                            ]
             ]
         ]

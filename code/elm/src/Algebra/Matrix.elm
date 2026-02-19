@@ -78,19 +78,27 @@ rowEchelon matrix =
         go acc currentRow currentColumn m =
             if currentColumn < columnCount m then
                 case firstAfterRowInColumn (Fraction.isZero >> not) currentRow currentColumn m of
-                    Found r _ _ ->
+                    Found r _ v ->
                         if currentRow < r then
                             go (Swap r currentRow :: acc) currentRow currentColumn (swap r currentRow m)
-                            -- ( m, acc )
+
+                        else if not (v == Fraction.one) then
+                            let
+                                v_ =
+                                    v
+                                        |> Fraction.invert
+                                        |> Maybe.withDefault Fraction.one
+                            in
+                            go (Multiply v_ r :: acc) currentRow currentColumn (multiplyRow v_ r m)
 
                         else
-                            ( m, acc )
+                            ( m, List.reverse acc )
 
                     NotFound ->
                         go acc currentRow (currentColumn + 1) m
 
             else
-                ( m, acc )
+                ( m, List.reverse acc )
     in
     go [] 0 0 matrix
 
@@ -112,4 +120,21 @@ swap i j ((Rows vs) as matrix) =
     vs
         |> Array.set i atJ
         |> Array.set j atI
+        |> Rows
+
+
+multiplyRow : Fraction -> Int -> Matrix -> Matrix
+multiplyRow v row ((Rows rows) as matrix) =
+    let
+        columns =
+            columnCount matrix
+
+        scaled =
+            rows
+                |> Array.get row
+                |> Maybe.map (Vector.scale v)
+                |> Maybe.withDefault (Vector.zero columns)
+    in
+    rows
+        |> Array.set row scaled
         |> Rows
