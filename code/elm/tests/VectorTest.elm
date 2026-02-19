@@ -96,6 +96,62 @@ suite =
                     in
                     Expect.equal actual expected
             ]
+        , describe "index"
+            [ test "index of 0 is first coefficient" <|
+                \_ ->
+                    let
+                        actual =
+                            [ 1, 2, 3 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+                                |> Vector.index 0
+
+                        expected =
+                            Fraction.fromInt 1
+                                |> Just
+                    in
+                    Expect.equal actual expected
+            , test "index of 1 is second coefficient" <|
+                \_ ->
+                    let
+                        actual =
+                            [ 1, 2, 3 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+                                |> Vector.index 1
+
+                        expected =
+                            Fraction.fromInt 2
+                                |> Just
+                    in
+                    Expect.equal actual expected
+            , test "index after dimension of Vector is Nothing" <|
+                \_ ->
+                    let
+                        actual =
+                            [ 1, 2, 3 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+                                |> Vector.index 3
+
+                        expected =
+                            Nothing
+                    in
+                    Expect.equal actual expected
+            , test "index before 0 of Vector is Nothing" <|
+                \_ ->
+                    let
+                        actual =
+                            [ 1, 2, 3 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+                                |> Vector.index -1
+
+                        expected =
+                            Nothing
+                    in
+                    Expect.equal actual expected
+            ]
         ]
 
 

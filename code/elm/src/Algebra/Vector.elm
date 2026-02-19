@@ -1,4 +1,4 @@
-module Algebra.Vector exposing (Vector, add, dimension, dot, fromList, scale, subtract, zero)
+module Algebra.Vector exposing (Vector, add, dimension, dot, fromList, index, scale, subtract, zero)
 
 import Fraction exposing (Fraction)
 import Util exposing (uncurry, zip)
@@ -49,3 +49,14 @@ dot (Vector left) (Vector right) =
     zip left right
         |> List.map (uncurry Fraction.multiply)
         |> List.foldr Fraction.add Fraction.zero
+
+
+index : Int -> Vector -> Maybe Fraction
+index n (Vector vector) =
+    if n < 0 then
+        Nothing
+
+    else
+        vector
+            |> List.drop n
+            |> List.head
