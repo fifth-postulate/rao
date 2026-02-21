@@ -1,4 +1,4 @@
-module Util exposing (rotate, uncurry, zip)
+module Util exposing (rotate, swap, uncurry, zip)
 
 
 uncurry : (a -> b -> c) -> ( a, b ) -> c
@@ -31,3 +31,8 @@ rotate us =
             List.drop 1 us
     in
     List.append ts hs
+
+
+swap : (b -> a -> c) -> a -> b -> c
+swap f a b =
+    f b a

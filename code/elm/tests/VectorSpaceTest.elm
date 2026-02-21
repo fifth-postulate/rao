@@ -13,7 +13,7 @@ suite : Test
 suite =
     describe "VectorSpace Module"
         [ describe "creation"
-            [ test "fromList creates a VectorSpace" <|
+            [ test "span creates a VectorSpace" <|
                 \_ ->
                     let
                         v =
@@ -22,9 +22,7 @@ suite =
                                 |> Vector.fromList
 
                         actual =
-                            v
-                                |> List.singleton
-                                |> VectorSpace.span
+                            vectorSpace [ [ 1, 2, 3 ] ]
 
                         expected =
                             VectorSpace.empty
@@ -48,8 +46,53 @@ suite =
                             VectorSpace.span [ b ]
                     in
                     toBeTrue (VectorSpace.contains v space)
+            , test "vector which is a sum of two vectors is contained" <|
+                \_ ->
+                    let
+                        b1 =
+                            [ 1, 2, 3 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+
+                        b2 =
+                            [ 3, 1, 3 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+
+                        v =
+                            Vector.add b1 b2
+
+                        space =
+                            VectorSpace.span [ b1, b2 ]
+                    in
+                    toBeTrue (VectorSpace.contains v space)
+            ]
+        , describe "intersection"
+            [ test "works as expected" <|
+                \_ ->
+                    let
+                        u =
+                            vectorSpace [ [ 1, 0, 0 ], [ 0, 1, 0 ] ]
+
+                        v =
+                            vectorSpace [ [ 1, 1, -1 ], [ 1, 1, 1 ] ]
+
+                        actual =
+                            VectorSpace.intersection u v
+
+                        expected =
+                            vectorSpace [ [ 1, 1, 0 ] ]
+                    in
+                    toBeTrue (VectorSpace.equals actual expected)
             ]
         ]
+
+
+vectorSpace : List (List Int) -> VectorSpace
+vectorSpace vectors =
+    vectors
+        |> List.map (List.map Fraction.fromInt >> Vector.fromList)
+        |> VectorSpace.span
 
 
 toBeTrue : Bool -> Expectation

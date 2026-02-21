@@ -1,14 +1,15 @@
-module Algebra.VectorSpace exposing (VectorSpace, add, contains, empty, span)
+module Algebra.VectorSpace exposing (VectorSpace, add, contains, empty, equals, intersection, span)
 
 import Algebra.Vector as Vector exposing (Vector)
 import Fraction exposing (Fraction)
-import Util exposing (uncurry, zip)
+import Util exposing (swap, uncurry, zip)
 
 
 type VectorSpace
     = VectorSpace
         { basis : List Vector
         }
+    | Empty
 
 
 span : List Vector -> VectorSpace
@@ -18,7 +19,7 @@ span basis =
 
 empty : VectorSpace
 empty =
-    VectorSpace { basis = [] }
+    Empty
 
 
 contains : Vector -> VectorSpace -> Bool
@@ -31,22 +32,27 @@ contains v space =
 
 
 projection : Vector -> VectorSpace -> Vector
-projection v (VectorSpace { basis }) =
-    let
-        coefficients =
-            basis
-                |> List.map (project v)
+projection v space =
+    case space of
+        VectorSpace { basis } ->
+            let
+                coefficients =
+                    basis
+                        |> List.map (project v)
 
-        components =
-            zip coefficients basis
-                |> List.map (uncurry Vector.scale)
-    in
-    case components of
-        c :: cs ->
-            List.foldl Vector.add c cs
+                components =
+                    zip coefficients basis
+                        |> List.map (uncurry Vector.scale)
+            in
+            case components of
+                c :: cs ->
+                    List.foldl Vector.add c cs
 
-        [] ->
-            v
+                [] ->
+                    v
+
+        Empty ->
+            Vector.zero (Vector.dimension v)
 
 
 project : Vector -> Vector -> Fraction
@@ -56,11 +62,50 @@ project v b =
 
 
 add : Vector -> VectorSpace -> VectorSpace
-add v ((VectorSpace vs) as space) =
-    if contains v space then
-        space
+add v space =
+    case space of
+        VectorSpace vs ->
+            if contains v space then
+                space
 
-    else
-        VectorSpace
-            { basis = List.append vs.basis [ v ]
-            }
+            else
+                let
+                    p =
+                        projection v space
+
+                    n =
+                        Vector.subtract v p
+                in
+                VectorSpace
+                    { basis = List.append vs.basis [ n ]
+                    }
+
+        Empty ->
+            VectorSpace { basis = [ v ] }
+
+
+intersection : VectorSpace -> VectorSpace -> VectorSpace
+intersection u v =
+    case ( u, v ) of
+        ( VectorSpace left, VectorSpace _ ) ->
+            left.basis
+                |> List.map (swap projection v)
+                |> span
+
+        _ ->
+            Empty
+
+
+equals : VectorSpace -> VectorSpace -> Bool
+equals u v =
+    isSubSpace u v && isSubSpace v u
+
+
+isSubSpace : VectorSpace -> VectorSpace -> Bool
+isSubSpace u v =
+    case u of
+        VectorSpace { basis } ->
+            List.all (swap contains v) basis
+
+        Empty ->
+            True
