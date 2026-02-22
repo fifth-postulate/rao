@@ -9,7 +9,7 @@ type VectorSpace
     = VectorSpace
         { basis : List Vector
         }
-    | Empty
+    | Origin
 
 
 span : List Vector -> VectorSpace
@@ -19,7 +19,7 @@ span basis =
 
 empty : VectorSpace
 empty =
-    Empty
+    Origin
 
 
 contains : Vector -> VectorSpace -> Bool
@@ -51,7 +51,7 @@ projection v space =
                 [] ->
                     v
 
-        Empty ->
+        Origin ->
             Vector.zero (Vector.dimension v)
 
 
@@ -80,7 +80,7 @@ add v space =
                     { basis = List.append vs.basis [ n ]
                     }
 
-        Empty ->
+        Origin ->
             VectorSpace { basis = [ v ] }
 
 
@@ -93,7 +93,7 @@ intersection u v =
                 |> span
 
         _ ->
-            Empty
+            Origin
 
 
 equals : VectorSpace -> VectorSpace -> Bool
@@ -107,5 +107,5 @@ isSubSpace u v =
         VectorSpace { basis } ->
             List.all (swap contains v) basis
 
-        Empty ->
+        Origin ->
             True
