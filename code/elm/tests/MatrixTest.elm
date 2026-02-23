@@ -2,11 +2,12 @@ module MatrixTest exposing (suite)
 
 import Algebra.Matrix as Matrix exposing (Matrix, Operation(..))
 import Algebra.Vector as Vector exposing (Vector)
-import Expect exposing (Expectation)
-import Fraction exposing (Fraction)
+import Algebra.VectorSpace as VectorSpace
+import Expect
+import Fraction
 import Fuzz exposing (..)
 import Test exposing (..)
-import Util exposing (uncurry)
+import VectorSpaceTest as Setup
 
 
 toVector : List Int -> Vector
@@ -219,5 +220,43 @@ suite =
                             [ \( actual, _, _ ) -> Expect.equal actual expected
                             , \( _, _, pivots ) -> Expect.equal pivots [ 1, 3, 4 ]
                             ]
+            ]
+        , describe "identity"
+            [ test "correct matrix" <|
+                \_ ->
+                    let
+                        actual =
+                            Matrix.identityMatrix 3
+
+                        expected =
+                            [ [ 1, 0, 0 ]
+                            , [ 0, 1, 0 ]
+                            , [ 0, 0, 1 ]
+                            ]
+                                |> matrix
+                    in
+                    Expect.equal actual expected
+            ]
+        , describe "kernel"
+            [ test "correct VectorSpace" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 1, 2, 0, 3, 0 ]
+                            , [ 0, 0, 1, 2, 0 ]
+                            , [ 0, 0, 0, 0, 1 ]
+                            , [ 0, 0, 0, 0, 0 ]
+                            ]
+                                |> matrix
+
+                        actual =
+                            Matrix.kernel start
+
+                        expected =
+                            [ [ 0, 0, 0, 1 ]
+                            ]
+                                |> Setup.vectorSpace
+                    in
+                    Expect.equal actual expected
             ]
         ]

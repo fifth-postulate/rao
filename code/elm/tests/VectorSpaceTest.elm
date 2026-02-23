@@ -1,12 +1,11 @@
-module VectorSpaceTest exposing (suite)
+module VectorSpaceTest exposing (suite, vectorSpace)
 
 import Algebra.Vector as Vector
-import Algebra.VectorSpace as VectorSpace exposing (VectorSpace, span)
+import Algebra.VectorSpace as VectorSpace exposing (VectorSpace)
 import Expect exposing (Expectation)
 import Fraction
 import Fuzz exposing (..)
 import Test exposing (..)
-import Util exposing (uncurry)
 
 
 suite : Test

@@ -1,8 +1,10 @@
-module Algebra.Matrix exposing (Matrix, Operation(..), element, fromList, index, rowEchelon)
+module Algebra.Matrix exposing (Matrix, Operation(..), element, fromList, identityMatrix, index, kernel, rowEchelon)
 
 import Algebra.Vector as Vector exposing (Vector)
+import Algebra.VectorSpace as VectorSpace exposing (VectorSpace)
 import Array exposing (Array)
 import Fraction exposing (Fraction)
+import Util exposing (swivel)
 
 
 type Matrix
@@ -195,3 +197,58 @@ linear v from to ((Rows rows) as matrix) =
     rows
         |> Array.set to result
         |> Rows
+
+
+identityMatrix : Int -> Matrix
+identityMatrix n =
+    let
+        base : Int -> Vector
+        base i =
+            1
+                :: List.repeat (n - 1) 0
+                |> swivel (negate i)
+                |> List.map Fraction.fromInt
+                |> Vector.fromList
+    in
+    Array.initialize n base
+        |> Rows
+
+
+kernel : Matrix -> VectorSpace
+kernel a =
+    let
+        ( _, operations, pivots ) =
+            rowEchelon a
+
+        numberOrRows =
+            rowCount a
+
+        id =
+            identityMatrix numberOrRows
+
+        basis =
+            operations
+                |> List.foldl perform id
+                |> selectRows (List.length pivots) numberOrRows
+    in
+    VectorSpace.span basis
+
+
+perform : Operation -> Matrix -> Matrix
+perform operation matrix =
+    case operation of
+        Swap i j ->
+            swap i j matrix
+
+        Multiply v i ->
+            multiplyRow v i matrix
+
+        Linear v i j ->
+            linear v i j matrix
+
+
+selectRows : Int -> Int -> Matrix -> List Vector
+selectRows i j (Rows rows) =
+    rows
+        |> Array.slice i j
+        |> Array.toList

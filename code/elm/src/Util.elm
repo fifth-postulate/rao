@@ -1,4 +1,4 @@
-module Util exposing (rotate, swap, uncurry, zip)
+module Util exposing (rotate, swap, swivel, uncurry, zip)
 
 
 uncurry : (a -> b -> c) -> ( a, b ) -> c
@@ -22,13 +22,25 @@ zip xs ys =
 
 
 rotate : List a -> List a
-rotate us =
+rotate =
+    swivel 1
+
+
+swivel : Int -> List a -> List a
+swivel n us =
     let
+        n_ =
+            if n < 0 then
+                List.length us + n
+
+            else
+                n
+
         hs =
-            List.take 1 us
+            List.take n_ us
 
         ts =
-            List.drop 1 us
+            List.drop n_ us
     in
     List.append ts hs
 
