@@ -2,7 +2,6 @@ module MatrixTest exposing (suite)
 
 import Algebra.Matrix as Matrix exposing (Matrix, Operation(..))
 import Algebra.Vector as Vector exposing (Vector)
-import Algebra.VectorSpace as VectorSpace
 import Expect
 import Fraction
 import Fuzz exposing (..)

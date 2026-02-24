@@ -1,6 +1,6 @@
 module FractionTest exposing (fraction, suite)
 
-import Expect exposing (Expectation)
+import Expect
 import Fraction exposing (Fraction)
 import Fuzz exposing (..)
 import Test exposing (..)

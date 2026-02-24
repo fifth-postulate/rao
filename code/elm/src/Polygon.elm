@@ -3,7 +3,7 @@ module Polygon exposing (Polygon, fromAngles, view)
 import BoundingBox exposing (BoundingBox)
 import Fraction exposing (Fraction)
 import Polygon.Point as Point exposing (Point)
-import Polygon.Point.Cartesian as Cartesian exposing (Cartesian)
+import Polygon.Point.Cartesian as Cartesian
 import Polygon.Point.Polar as Polar exposing (Polar)
 import Svg exposing (Svg)
 import Svg.Attributes as Attribute
