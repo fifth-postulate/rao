@@ -1,6 +1,7 @@
 module Algebra.AffineSubspace exposing (Subspace, base, subspace)
 
 import Algebra.Vector as Vector exposing (Vector)
+import Algebra.VectorSpace as VectorSpace exposing (VectorSpace)
 import Fraction exposing (Fraction)
 
 
@@ -9,7 +10,7 @@ type Subspace
         { normal : Vector
         , q : Fraction
         , base : Vector
-        , basis : List Vector
+        , basis : VectorSpace
         }
 
 
@@ -30,7 +31,7 @@ subspace n q =
         { normal = n
         , q = q
         , base = b
-        , basis = []
+        , basis = VectorSpace.empty
         }
 
 
