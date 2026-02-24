@@ -1,4 +1,4 @@
-module Algebra.Matrix exposing (Matrix, Operation(..), element, fromList, identityMatrix, index, kernel, rowEchelon)
+module Algebra.Matrix exposing (Matrix, Operation(..), element, fromList, identityMatrix, index, kernel, rowEchelon, transpose)
 
 import Algebra.Vector as Vector exposing (Vector)
 import Algebra.VectorSpace as VectorSpace exposing (VectorSpace)
@@ -252,3 +252,16 @@ selectRows i j (Rows rows) =
     rows
         |> Array.slice i j
         |> Array.toList
+
+
+transpose : Matrix -> Matrix
+transpose matrix =
+    let
+        row : Int -> Vector
+        row c =
+            List.range 0 (rowCount matrix - 1)
+                |> List.map (\r -> element r c matrix |> Maybe.withDefault Fraction.zero)
+                |> Vector.fromList
+    in
+    Array.initialize (columnCount matrix) row
+        |> Rows
