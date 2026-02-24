@@ -238,7 +238,7 @@ suite =
                     Expect.equal actual expected
             ]
         , describe "kernel"
-            [ test "correct VectorSpace" <|
+            [ test "correct VectorSpace for matrix in rowEchelon" <|
                 \_ ->
                     let
                         start =
@@ -255,6 +255,45 @@ suite =
                         expected =
                             [ [ 0, 0, 0, 1 ]
                             ]
+                                |> Setup.vectorSpace
+                    in
+                    Expect.equal actual expected
+            , test "correct VectorSpace for matrix a swap from rowEchelon" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 1, 2, 0, 3, 0 ]
+                            , [ 0, 0, 1, 2, 0 ]
+                            , [ 0, 0, 0, 0, 0 ]
+                            , [ 0, 0, 0, 0, 1 ]
+                            ]
+                                |> matrix
+
+                        actual =
+                            Matrix.kernel start
+
+                        expected =
+                            [ [ 0, 0, 1, 0 ]
+                            ]
+                                |> Setup.vectorSpace
+                    in
+                    Expect.equal actual expected
+            , test "correct VectorSpace for matrix linear from rowEchelon" <|
+                \_ ->
+                    let
+                        start =
+                            [ [ 1, 2, 0, 3, 0 ]
+                            , [ 0, 0, 1, 2, 0 ]
+                            , [ 0, 0, 0, 0, 1 ]
+                            , [ 0, 0, 0, 0, 2 ]
+                            ]
+                                |> matrix
+
+                        actual =
+                            Matrix.kernel start
+
+                        expected =
+                            [ [ 0, 0, -2, 1 ] ]
                                 |> Setup.vectorSpace
                     in
                     Expect.equal actual expected
