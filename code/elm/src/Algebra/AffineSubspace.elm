@@ -1,5 +1,6 @@
-module Algebra.AffineSubspace exposing (Subspace, base, subspace)
+module Algebra.AffineSubspace exposing (Subspace, base, basis, subspace)
 
+import Algebra.Matrix as Matrix exposing (Matrix)
 import Algebra.Vector as Vector exposing (Vector)
 import Algebra.VectorSpace as VectorSpace exposing (VectorSpace)
 import Fraction exposing (Fraction)
@@ -26,15 +27,26 @@ subspace n q =
 
         b =
             Vector.scale s n
+
+        bs =
+            [ n ]
+                |> Matrix.fromList
+                |> Matrix.transpose
+                |> Matrix.kernel
     in
     Subspace
         { normal = n
         , q = q
         , base = b
-        , basis = VectorSpace.empty
+        , basis = bs
         }
 
 
 base : Subspace -> Vector
 base (Subspace space) =
     space.base
+
+
+basis : Subspace -> VectorSpace
+basis (Subspace space) =
+    space.basis

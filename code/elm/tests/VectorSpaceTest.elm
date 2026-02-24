@@ -6,6 +6,7 @@ import Expect exposing (Expectation)
 import Fraction
 import Fuzz exposing (..)
 import Test exposing (..)
+import TestUtils exposing (toBeTrue)
 
 
 suite : Test
@@ -92,12 +93,3 @@ vectorSpace vectors =
     vectors
         |> List.map (List.map Fraction.fromInt >> Vector.fromList)
         |> VectorSpace.span
-
-
-toBeTrue : Bool -> Expectation
-toBeTrue b =
-    if b then
-        Expect.pass
-
-    else
-        Expect.fail "expected to be True"
