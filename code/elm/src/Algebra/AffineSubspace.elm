@@ -1,4 +1,4 @@
-module Algebra.AffineSubspace exposing (Subspace, base, basis, subspace)
+module Algebra.AffineSubspace exposing (Subspace, base, basis, empty, subspace)
 
 import Algebra.Matrix as Matrix exposing (Matrix)
 import Algebra.Vector as Vector exposing (Vector)
@@ -13,6 +13,7 @@ type Subspace
         , base : Vector
         , basis : VectorSpace
         }
+    | Empty
 
 
 subspace : Vector -> Fraction -> Subspace
@@ -42,11 +43,26 @@ subspace n q =
         }
 
 
-base : Subspace -> Vector
-base (Subspace space) =
-    space.base
+empty : Subspace
+empty =
+    Empty
 
 
-basis : Subspace -> VectorSpace
-basis (Subspace space) =
-    space.basis
+base : Subspace -> Maybe Vector
+base space =
+    case space of
+        Subspace s ->
+            Just s.base
+
+        Empty ->
+            Nothing
+
+
+basis : Subspace -> Maybe VectorSpace
+basis space =
+    case space of
+        Subspace s ->
+            Just s.basis
+
+        Empty ->
+            Nothing

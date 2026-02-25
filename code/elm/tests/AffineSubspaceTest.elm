@@ -38,6 +38,7 @@ suite =
 
                         expected =
                             Vector.scale t normal
+                                |> Just
                     in
                     Expect.equal actual expected
             , test "basis of a subspace can be determined" <|
@@ -56,6 +57,7 @@ suite =
 
                         actual =
                             Subspace.basis space
+                                |> Maybe.withDefault VectorSpace.empty
 
                         t =
                             Fraction.divide q (Fraction.fromInt 14)
