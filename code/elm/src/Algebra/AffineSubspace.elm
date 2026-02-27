@@ -1,4 +1,4 @@
-module Algebra.AffineSubspace exposing (Subspace, base, basis, empty, subspace)
+module Algebra.AffineSubspace exposing (Subspace, base, basis, create, empty, intersection, subspace)
 
 import Algebra.Matrix as Matrix exposing (Matrix)
 import Algebra.Vector as Vector exposing (Vector)
@@ -8,9 +8,7 @@ import Fraction exposing (Fraction)
 
 type Subspace
     = Subspace
-        { normal : Vector
-        , q : Fraction
-        , base : Vector
+        { base : Vector
         , basis : VectorSpace
         }
     | Empty
@@ -35,12 +33,12 @@ subspace n q =
                 |> Matrix.transpose
                 |> Matrix.kernel
     in
-    Subspace
-        { normal = n
-        , q = q
-        , base = b
-        , basis = bs
-        }
+    create b bs
+
+
+create : Vector -> VectorSpace -> Subspace
+create b bs =
+    Subspace { base = b, basis = bs }
 
 
 empty : Subspace
@@ -66,3 +64,21 @@ basis space =
 
         Empty ->
             Nothing
+
+
+intersection : Subspace -> Subspace -> Subspace
+intersection left right =
+    case ( left, right ) of
+        ( Subspace l, Subspace r ) ->
+            if VectorSpace.isSubspace l.basis r.basis || VectorSpace.isSubspace r.basis l.basis then
+                if l.base == r.base then
+                    create l.base (VectorSpace.intersection l.basis r.basis)
+
+                else
+                    Empty
+
+            else
+                left
+
+        _ ->
+            Empty

@@ -1,4 +1,4 @@
-module Algebra.VectorSpace exposing (VectorSpace, add, contains, empty, equals, intersection, span)
+module Algebra.VectorSpace exposing (VectorSpace, add, contains, empty, equals, intersection, isSubspace, span)
 
 import Algebra.Vector as Vector exposing (Vector)
 import Fraction exposing (Fraction)
@@ -98,11 +98,11 @@ intersection u v =
 
 equals : VectorSpace -> VectorSpace -> Bool
 equals u v =
-    isSubSpace u v && isSubSpace v u
+    isSubspace u v && isSubspace v u
 
 
-isSubSpace : VectorSpace -> VectorSpace -> Bool
-isSubSpace u v =
+isSubspace : VectorSpace -> VectorSpace -> Bool
+isSubspace u v =
     case u of
         VectorSpace { basis } ->
             List.all (swap contains v) basis
