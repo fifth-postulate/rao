@@ -81,7 +81,11 @@ add v space =
                     }
 
         Origin ->
-            VectorSpace { basis = [ v ] }
+            if Vector.isZero v then
+                Origin
+
+            else
+                VectorSpace { basis = [ v ] }
 
 
 intersection : VectorSpace -> VectorSpace -> VectorSpace

@@ -1,4 +1,4 @@
-module Algebra.Vector exposing (Vector, add, dimension, dot, fromList, index, scale, subtract, zero)
+module Algebra.Vector exposing (Vector, add, dimension, dot, fromList, index, isZero, scale, subtract, zero)
 
 import Fraction exposing (Fraction)
 import Util exposing (uncurry, zip)
@@ -18,6 +18,11 @@ zero dim =
     Fraction.zero
         |> List.repeat (max dim 0)
         |> fromList
+
+
+isZero : Vector -> Bool
+isZero (Vector coordinates) =
+    List.all ((==) Fraction.zero) coordinates
 
 
 dimension : Vector -> Int

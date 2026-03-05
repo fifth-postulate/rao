@@ -78,7 +78,15 @@ intersection left right =
                     Empty
 
             else
-                left
+                let
+                    space =
+                        VectorSpace.intersection (Debug.log "left" l.basis) (Debug.log "right" r.basis)
+                            |> Debug.log "intersection"
+
+                    b =
+                        l.base
+                in
+                create b space
 
         _ ->
             Empty

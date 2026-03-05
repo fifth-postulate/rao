@@ -144,5 +144,43 @@ suite =
                                 small
                     in
                     Expect.equal actual expected
+            , test "with orthogonal spaces" <|
+                \_ ->
+                    let
+                        e1 =
+                            [ 1, 0, 0 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+
+                        e2 =
+                            [ 0, 1, 0 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+
+                        e3 =
+                            [ 0, 0, 1 ]
+                                |> List.map Fraction.fromInt
+                                |> Vector.fromList
+
+                        q =
+                            Fraction.fromInt 1
+
+                        left =
+                            subspace e1 q
+
+                        right =
+                            subspace e2 q
+
+                        expected =
+                            Subspace.create
+                                (Vector.add e1 e2)
+                                (VectorSpace.span [ e3 ])
+
+                        actual =
+                            Subspace.intersection
+                                left
+                                right
+                    in
+                    Expect.equal actual expected
             ]
         ]
