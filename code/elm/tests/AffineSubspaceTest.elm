@@ -121,7 +121,7 @@ suite =
                                 |> List.map Fraction.fromInt
                                 |> Vector.fromList
 
-                        null =
+                        orthogonal =
                             [ 0, 1, 0 ]
                                 |> List.map Fraction.fromInt
                                 |> Vector.fromList
@@ -133,7 +133,7 @@ suite =
                             subspace normal q
 
                         small =
-                            Subspace.create normal (VectorSpace.span [ null ])
+                            Subspace.create normal (VectorSpace.span [ orthogonal ])
 
                         expected =
                             small
