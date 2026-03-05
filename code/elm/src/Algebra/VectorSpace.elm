@@ -63,12 +63,12 @@ project v b =
 
 add : Vector -> VectorSpace -> VectorSpace
 add v space =
-    case space of
-        VectorSpace vs ->
-            if contains v space then
-                space
+    if contains v space then
+        space
 
-            else
+    else
+        case space of
+            VectorSpace vs ->
                 let
                     p =
                         projection v space
@@ -80,11 +80,7 @@ add v space =
                     { basis = List.append vs.basis [ n ]
                     }
 
-        Origin ->
-            if Vector.isZero v then
-                Origin
-
-            else
+            Origin ->
                 VectorSpace { basis = [ v ] }
 
 
